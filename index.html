@@ -181,6 +181,7 @@
       line-height: 1.45;
       background: linear-gradient(135deg, #fff7de 0%, #e8ca79 50%, #9e7f3a 100%);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
       filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 16px rgba(212, 175, 55, 0.3));
     }
@@ -407,7 +408,7 @@
       opacity: 0;
       transform: translateY(4px);
       filter: blur(3px);
-      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), filter 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1), transform 1.5s cubic-bezier(0.16, 1, 0.3, 1), filter 1.5s cubic-bezier(0.16, 1, 0.3, 1);
       margin: 0 0.14em;
     }
 
@@ -1126,7 +1127,7 @@
         <form id="rsvp-form" onsubmit="submitRsvp(event)">
           <!-- Name -->
           <div class="form-field">
-            <label class="field-tag" for="guest-name">Full Name / Alias</label>
+            <label class="field-tag" for="guest-name">Full Name</label>
             <input type="text" id="guest-name" class="gothic-input" required placeholder="Lord Sterling" />
           </div>
 
@@ -1185,7 +1186,7 @@
         <h3 class="conf-pledge-title">Mark of Entry Sealed</h3>
 
         <p class="conf-letter-text" id="conf-letter-body">
-          Thy words have reached the shadows of Blackthorn Manor. Thy place is etched into the registry for the eve of All Hallows.
+          Your attendance has been recorded within the register of Blackthorn Manor. The doors shall open at half past seven, and your presence is expected.
         </p>
 
         <div class="conf-meta-row" id="conf-meta-summary">
@@ -1193,12 +1194,12 @@
         </div>
 
         <div class="conf-signature-block">
-          <div class="conf-signed-by-label">Affixed by thy hand</div>
+          <div class="conf-signed-by-label">Regisgtered Under</div>
           <div class="conf-signature-hand" id="conf-signature-name">Lord Sterling</div>
         </div>
 
         <button class="conf-dismiss-btn" type="button" onclick="closeConfirmation()">
-          Review or Alter Arrangements
+          Review Arrangements
         </button>
       </div>
     </div>
@@ -1307,7 +1308,7 @@
         letterStage.classList.add('active');
 
         // Original narrative word reveal timing
-        const wordInterval = 110;
+        const wordInterval = 250;
         const startNarrativeDelay = 600;
 
         spans.forEach((span, i) => {
@@ -1419,7 +1420,7 @@ function submitRsvp(e) {
     submitBtn.innerHTML = "Record Thy Attendance ✤";
   }, 450);
 }
-
+3
 
     function closeConfirmation() {
       document.getElementById('confirmation-stage').classList.remove('revealed');
