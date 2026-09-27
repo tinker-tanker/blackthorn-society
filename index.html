@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>The Blackthorn Society</title>
+
+  <!-- Victorian & Gothic Serif Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #050406;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      font-family: 'Cinzel', Georgia, serif;
+    }
+
+    /* Mobile Container Frame */
+    .viewport {
+      position: relative;
+      width: 100%;
+      max-width: 440px;
+      height: 100vh;
+      min-height: 700px;
+      max-height: 940px;
+      background-color: #070608;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(0, 0, 0, 0.98);
+    }
+
+    /* Clean Base Artwork */
+    .base-artwork {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      z-index: 1;
+      user-select: none;
+      pointer-events: none;
+      transition: filter 1.5s ease;
+    }
+
+    .viewport.in-letter-view .base-artwork {
+      filter: brightness(0.32) blur(2.5px);
+    }
+
+    /* Candelabra Shadow */
+    .mask-candelabra {
+      position: absolute;
+      top: 19%;
+      left: 10%;
+      right: 10%;
+      height: 69%;
+      background: radial-gradient(ellipse at 50% 50%, #070608 68%, rgba(7, 6, 8, 0.96) 88%, transparent 100%);
+      z-index: 3;
+      pointer-events: none;
+      opacity: 1;
+      filter: blur(16px);
+      transition: opacity 3.2s cubic-bezier(0.2, 0.8, 0.25, 1);
+    }
+
+    .mask-candelabra.revealed {
+      opacity: 0;
+    }
+
+    /* Living Candle Flame Lights */
+    .candle-aura-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 6;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 2.8s ease;
+    }
+
+    .candle-aura-layer.active {
+      opacity: 1;
+    }
+
+    .flame-node {
+      position: absolute;
+      width: 6px;
+      height: 16px;
+      border-radius: 50% 50% 35% 35% / 80% 80% 25% 25%;
+      background: radial-gradient(ellipse at bottom, rgba(255, 255, 255, 0.95) 15%, rgba(255, 215, 80, 0.85) 45%, rgba(255, 70, 0, 0.6) 80%, transparent 100%);
+      box-shadow: 
+        0 0 14px rgba(255, 185, 45, 0.95),
+        0 -3px 8px rgba(255, 80, 0, 0.8);
+      transform-origin: bottom center;
+      animation: flicker 3s ease-in-out infinite alternate;
+    }
+
+    .f-center { top: 24.3%; left: 50.1%; transform: translate(-50%, -50%); animation-duration: 2.8s; }
+    .f-mid-l  { top: 31.8%; left: 40.5%; transform: translate(-50%, -50%); animation-duration: 3.2s; animation-delay: 0.3s; }
+    .f-mid-r  { top: 31.8%; left: 63.8%; transform: translate(-50%, -50%); animation-duration: 2.7s; animation-delay: 0.7s; }
+    .f-low-l  { top: 35.5%; left: 30.8%; transform: translate(-50%, -50%); animation-duration: 3.4s; animation-delay: 0.1s; }
+    .f-low-r  { top: 35.5%; left: 70.8%; transform: translate(-50%, -50%); animation-duration: 3.0s; animation-delay: 0.5s; }
+
+    @keyframes flicker {
+      0%   { transform: translate(-50%, -50%) scale(1) rotate(-1deg); opacity: 0.92; }
+      25%  { transform: translate(-50%, -50%) scale(1.07, 0.95) rotate(1.5deg); opacity: 1; }
+      50%  { transform: translate(-50%, -50%) scale(0.95, 1.04) rotate(-0.5deg); opacity: 0.88; }
+      75%  { transform: translate(-50%, -50%) scale(1.03, 0.97) rotate(2deg); opacity: 0.97; }
+      100% { transform: translate(-50%, -50%) scale(0.97, 1.02) rotate(-1.5deg); opacity: 0.91; }
+    }
+
+    /* Landing Text Elements */
+    .spoken-sentence {
+      position: absolute;
+      top: 19%;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 10;
+      font-size: 0.76rem;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+      color: #ede2c9;
+      text-shadow: 0 0 10px rgba(0,0,0,0.9), 0 0 14px rgba(212, 175, 55, 0.35);
+      font-weight: 500;
+      transition: opacity 1.8s ease, transform 1.8s ease;
+    }
+
+    .word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(6px);
+      filter: blur(4px);
+      transition: opacity 1.1s cubic-bezier(0.16, 1, 0.3, 1), transform 1.1s cubic-bezier(0.16, 1, 0.3, 1), filter 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+      margin: 0 0.22em;
+    }
+
+    .word.spoken {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    .title-banner {
+      position: absolute;
+      top: 66%;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 10;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 2.2s cubic-bezier(0.16, 1, 0.3, 1), transform 2.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .title-banner.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .title-text {
+      font-family: 'Cinzel', serif;
+      font-size: 1.28rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-weight: 600;
+      background: linear-gradient(135deg, #fff7de 0%, #e8ca79 50%, #9e7f3a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 16px rgba(212, 175, 55, 0.3));
+    }
+
+    .details-footer {
+      position: absolute;
+      bottom: 5.2%;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.22rem;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 2s cubic-bezier(0.16, 1, 0.3, 1), transform 2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .details-footer.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .details-line {
+      font-size: 0.76rem;
+      letter-spacing: 0.26em;
+      color: #ede2c9;
+      text-transform: uppercase;
+      font-weight: 500;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95), 0 0 12px rgba(212, 175, 55, 0.2);
+      line-height: 1.35;
+    }
+
+    .faded-out {
+      opacity: 0 !important;
+      transform: translateY(-8px) !important;
+      pointer-events: none !important;
+    }
+
+    /* "Answer the Summons >" Button */
+    .action-gate {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.94);
+      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 2s cubic-bezier(0.16, 1, 0.3, 1), transform 2s cubic-bezier(0.16, 1, 0.3, 1);
+      width: 82%;
+      max-width: 320px;
+    }
+
+    .action-gate.visible {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
+    }
+
+    .action-gate.hidden {
+      opacity: 0 !important;
+      transform: translate(-50%, -46%) scale(0.92) !important;
+      pointer-events: none !important;
+    }
+
+    .summons-btn {
+      width: 100%;
+      background: radial-gradient(ellipse at center, rgba(28, 23, 25, 0.96) 0%, rgba(10, 8, 10, 0.98) 100%);
+      border: 1px solid rgba(212, 175, 55, 0.7);
+      color: #f7edd4;
+      font-family: 'Cinzel', serif;
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      padding: 1.15rem 1.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      position: relative;
+      box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.95),
+        0 0 25px rgba(212, 175, 55, 0.15),
+        inset 0 0 15px rgba(212, 175, 55, 0.1);
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    .summons-btn::before {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      pointer-events: none;
+    }
+
+    .summons-btn:active {
+      transform: scale(0.98);
+      background: #1e191b;
+    }
+
+    .summons-arrow {
+      font-size: 0.9rem;
+      color: #d4af37;
+      margin-left: 0.2rem;
+    }
+
+    /* ==========================================================================
+       VINTAGE VICTORIAN INVITATION LETTER
+       ========================================================================== */
+    .parchment-letter-stage {
+      position: absolute;
+      inset: 0;
+      z-index: 40;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.9rem 0.8rem;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+    }
+
+    .parchment-letter-stage.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .parchment-paper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-height: 880px;
+      background-color: #dfccaa;
+      background-image: 
+        radial-gradient(ellipse at 50% 35%, rgba(255, 248, 225, 0.55) 0%, rgba(210, 185, 142, 0.75) 85%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.12'/%3E%3C/svg%3E");
+      color: #1a1510;
+      border-radius: 3px;
+      padding: 2.6rem 1.3rem 2.2rem;
+      box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.95),
+        inset 0 0 45px rgba(95, 63, 25, 0.5),
+        inset 0 0 100px rgba(60, 38, 12, 0.35);
+      overflow-y: auto;
+      scrollbar-width: none;
+      transform: translateY(20px) scale(0.97);
+      transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .parchment-letter-stage.active .parchment-paper {
+      transform: translateY(0) scale(1);
+    }
+
+    .parchment-paper::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Deckled/Burned Frame */
+    .letter-inner-frame {
+      position: absolute;
+      inset: 8px;
+      border: 1px solid #755529;
+      pointer-events: none;
+    }
+
+    .letter-inner-frame::before {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px dashed rgba(117, 85, 41, 0.45);
+    }
+
+    .corner-fleuron {
+      position: absolute;
+      color: #755529;
+      font-size: 0.72rem;
+    }
+    .cf-tl { top: 10px; left: 12px; }
+    .cf-tr { top: 10px; right: 12px; }
+    .cf-bl { bottom: 10px; left: 12px; }
+    .cf-br { bottom: 10px; right: 12px; }
+
+    .letter-body {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .p-word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(3px);
+      filter: blur(5px);
+      transition: 
+        opacity 1.85s cubic-bezier(0.22, 0.61, 0.36, 1), 
+        transform 1.85s cubic-bezier(0.22, 0.61, 0.36, 1), 
+        filter 1.85s cubic-bezier(0.22, 0.61, 0.36, 1);
+      margin: 0 0.14em;
+    }
+
+    .p-word.visible {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    .p-the-line {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.42em;
+      font-weight: 600;
+      color: #634a28;
+      text-transform: uppercase;
+      margin-top: 0.2rem;
+      margin-bottom: 0.15rem;
+    }
+
+    .p-society {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1rem, 4.6vw, 1.3rem);
+      letter-spacing: clamp(0.14em, 2vw, 0.24em);
+      font-weight: 700;
+      color: #1e1711;
+      white-space: nowrap;
+      margin-bottom: 0.25rem;
+      width: 100%;
+      text-align: center;
+    }
+
+    .p-sublead {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: #523f2a;
+      margin-bottom: 0.2rem;
+    }
+
+    /* Blackthorn Manor title with natural sentence-like spacing below */
+    .p-manor-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.25rem;
+      letter-spacing: 0.18em;
+      font-weight: 700;
+      color: #1a140f;
+      margin-top: 0.95rem;
+      margin-bottom: 0.45rem; /* Matches inter-sentence gap */
+    }
+
+    .p-story-block {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem;
+      line-height: 1.48;
+      color: #2e241a;
+      max-width: 90%;
+      margin-bottom: 0.6rem;
+    }
+
+    .p-story-block p {
+      margin-bottom: 0.45rem;
+      text-wrap: pretty;
+    }
+
+    .p-story-block p:last-child {
+      margin-bottom: 0;
+    }
+
+    .divider-mark {
+      color: #755529;
+      font-size: 0.74rem;
+      margin: 1.25rem 0 1.55rem;
+      letter-spacing: 0.45em;
+    }
+
+    /* Two-Column Logistics Grid */
+    .logistics-block {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1), transform 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .logistics-block.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .logistics-row {
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      align-items: baseline;
+      column-gap: 0.85rem;
+      text-align: left;
+      padding-bottom: 0.45rem;
+      border-bottom: 1px dotted rgba(117, 85, 41, 0.25);
+    }
+
+    /* Final row (Supper): completely borderless */
+    .logistics-row.no-border,
+    .logistics-row:last-child {
+      border-bottom: none !important;
+      padding-bottom: 0;
+    }
+
+    .logistics-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.64rem;
+      letter-spacing: 0.22em;
+      font-weight: 700;
+      color: #694e2a;
+      text-transform: uppercase;
+      line-height: 1.35;
+    }
+
+    .logistics-value {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.98rem;
+      line-height: 1.35;
+      color: #241d16;
+    }
+
+    .logistics-value.font-serif-caps {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.14em;
+      font-weight: 600;
+    }
+
+    /* Themed RSVP Trigger Button */
+    .rsvp-trigger-container {
+      width: 100%;
+      margin-top: 1.8rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .rsvp-open-btn {
+      width: 100%;
+      background: radial-gradient(ellipse at center, #261f22 0%, #120e10 100%);
+      border: 1px solid #755529;
+      color: #ede2c9;
+      font-family: 'Cinzel', serif;
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      padding: 1.05rem 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      position: relative;
+      box-shadow: 
+        0 6px 18px rgba(0, 0, 0, 0.5),
+        inset 0 0 10px rgba(117, 85, 41, 0.35);
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    .rsvp-open-btn::before {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      pointer-events: none;
+    }
+
+    .rsvp-open-btn:active {
+      transform: scale(0.98);
+      background: #181416;
+    }
+
+    /* ==========================================================================
+       RSVP MODAL DRAWER
+       ========================================================================== */
+    .rsvp-drawer-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.84);
+      backdrop-filter: blur(5px);
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .rsvp-drawer-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .rsvp-card {
+      width: 100%;
+      background: #141113;
+      border-top: 1px solid var(--gold-primary, #d4af37);
+      border-radius: 12px 12px 0 0;
+      padding: 2.2rem 1.6rem 2.6rem;
+      box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.95);
+      transform: translateY(100%);
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      max-height: 88vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .rsvp-drawer-overlay.open .rsvp-card {
+      transform: translateY(0);
+    }
+
+    .drawer-close-btn {
+      position: absolute;
+      top: 1.1rem;
+      right: 1.3rem;
+      background: none;
+      border: none;
+      color: #9c8242;
+      font-size: 1.5rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0.2rem 0.5rem;
+    }
+
+    .rsvp-header-box {
+      text-align: center;
+      margin-bottom: 1.6rem;
+    }
+
+    .rsvp-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.12rem;
+      color: #f4e8c1;
+      letter-spacing: 0.22em;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .rsvp-subtitle {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: #a49480;
+    }
+
+    .form-field {
+      margin-bottom: 1.4rem;
+      text-align: left;
+    }
+
+    .form-field label.field-tag {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.24em;
+      color: #ab9357;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .gothic-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      color: #f7edd4;
+      padding: 0.8rem 0.9rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.05rem;
+      outline: none;
+      border-radius: 2px;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .gothic-input:focus {
+      border-color: #f4e8c1;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    }
+
+    .radio-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 0.65rem 0.85rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      border-radius: 2px;
+      transition: border-color 0.25s, background 0.25s;
+    }
+
+    .radio-option:hover {
+      border-color: rgba(212, 175, 55, 0.5);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .radio-option input[type="radio"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1px solid #9c8242;
+      border-radius: 50%;
+      outline: none;
+      margin-right: 0.75rem;
+      position: relative;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .radio-option input[type="radio"]:checked {
+      border-color: #f4e8c1;
+      background: #731818;
+      box-shadow: inset 0 0 0 3px #141113;
+    }
+
+    .radio-text {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem;
+      color: #ede2c9;
+    }
+
+    .gothic-select {
+      width: 100%;
+      background: #181416;
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      color: #f7edd4;
+      padding: 0.8rem 0.9rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.05rem;
+      outline: none;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: border-color 0.3s;
+    }
+
+    .gothic-select:focus {
+      border-color: #f4e8c1;
+    }
+
+    .gothic-select option {
+      background: #181416;
+      color: #f7edd4;
+    }
+
+    .submit-rsvp-btn {
+      width: 100%;
+      background: radial-gradient(ellipse at center, #2e1d1f 0%, #150c0e 100%);
+      border: 1px solid #d4af37;
+      color: #f5ebd0;
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 1.15rem 1.4rem;
+      font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      box-shadow: 
+        0 6px 20px rgba(0, 0, 0, 0.9),
+        0 0 15px rgba(212, 175, 55, 0.2);
+      transition: all 0.3s ease;
+      margin-top: 1.4rem;
+    }
+
+    .submit-rsvp-btn::before {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      pointer-events: none;
+    }
+
+    .submit-rsvp-btn:active {
+      transform: scale(0.98);
+      background: #1e1315;
+    }
+
+    .rsvp-status-notice {
+      display: none;
+      margin-bottom: 1.2rem;
+      padding: 0.85rem;
+      border: 1px solid #9c8242;
+      background: rgba(212, 175, 55, 0.08);
+      color: #f5ebd0;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      text-align: center;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="viewport" id="viewport">
+    <!-- Clean High-Res Base Artwork -->
+    <img src="candelabra-invite.png" alt="Blackthorn Manor" class="base-artwork" />
+
+    <!-- Candelabra Mask -->
+    <div class="mask-candelabra" id="mask-candelabra"></div>
+
+    <!-- Living Candle Flame Lights -->
+    <div class="candle-aura-layer" id="candle-auras">
+      <div class="flame-node f-center"></div>
+      <div class="flame-node f-mid-l"></div>
+      <div class="flame-node f-mid-r"></div>
+      <div class="flame-node f-low-l"></div>
+      <div class="flame-node f-low-r"></div>
+    </div>
+
+    <!-- 1. Spoken Entrance Text (Top) -->
+    <div class="spoken-sentence" id="spoken-sentence">
+      <span class="word" id="w1">You</span>
+      <span class="word" id="w2">have</span>
+      <span class="word" id="w3">been</span>
+      <span class="word" id="w4">summoned</span>
+    </div>
+
+    <!-- 2. Middle Title -->
+    <div class="title-banner" id="title-banner">
+      <h1 class="title-text">Blackthorn Manor Awaits</h1>
+    </div>
+
+    <!-- 3. Bottom Event Details -->
+    <footer class="details-footer" id="details-footer">
+      <div class="details-line">October 30, 2026</div>
+      <div class="details-line">5908 Danville Dr.</div>
+      <div class="details-line">Raleigh, NC 27612</div>
+    </footer>
+
+    <!-- 4. "Answer the Summons >" Button -->
+    <div class="action-gate" id="action-gate">
+      <button class="summons-btn" id="summons-btn" type="button" onclick="openVintageInvitation()">
+        Answer the Summons <span class="summons-arrow">&gt;</span>
+      </button>
+    </div>
+
+    <!-- 5. Vintage Victorian Invitation Letter Overlay -->
+    <section class="parchment-letter-stage" id="letter-stage">
+      <div class="parchment-paper">
+        <div class="letter-inner-frame"></div>
+        <div class="corner-fleuron cf-tl">✤</div>
+        <div class="corner-fleuron cf-tr">✤</div>
+        <div class="corner-fleuron cf-bl">✤</div>
+        <div class="corner-fleuron cf-br">✤</div>
+
+        <div class="letter-body">
+          <!-- Header -->
+          <div class="p-the-line word-stream" data-words="THE"></div>
+          <div class="p-society word-stream" data-words="BLACKTHORN SOCIETY"></div>
+          <div class="p-sublead word-stream" data-words="invites you to an evening at"></div>
+          <div class="p-manor-title word-stream" data-words="BLACKTHORN MANOR"></div>
+
+          <!-- Narrative -->
+          <div class="p-story-block">
+            <p class="word-stream" data-words="On the eve of All Hallows, Blackthorn Manor shall open its doors once more."></p>
+            <p class="word-stream" data-words="The Society will gather within its old rooms for an evening of spirits, secrets, and questionable&nbsp;company."></p>
+            <p class="word-stream" data-words="The house has stood quiet for many years."></p>
+            <p class="word-stream" data-words="On this night, it shall receive company again."></p>
+          </div>
+
+          <!-- Divider -->
+          <div class="divider-mark" id="letter-divider" style="opacity: 0; transition: opacity 1.2s ease;">✤ &nbsp; ✤ &nbsp; ✤</div>
+
+          <!-- Logistics & Event Details -->
+          <div class="logistics-block" id="logistics-block">
+            <!-- Date -->
+            <div class="logistics-row">
+              <div class="logistics-label">DATE</div>
+              <div class="logistics-value font-serif-caps">Friday, October 30, 2026</div>
+            </div>
+
+            <!-- Time -->
+            <div class="logistics-row">
+              <div class="logistics-label">TIME</div>
+              <div class="logistics-value font-serif-caps">7:30 PM</div>
+            </div>
+
+            <!-- Address -->
+            <div class="logistics-row">
+              <div class="logistics-label">ADDRESS</div>
+              <div class="logistics-value font-serif-caps">
+                5909 Danville Dr.<br>
+                Raleigh, NC 27612
+              </div>
+            </div>
+
+            <!-- Attire -->
+            <div class="logistics-row">
+              <div class="logistics-label">ATTIRE</div>
+              <div class="logistics-value">
+                Come as you are — or as someone else entirely.
+              </div>
+            </div>
+
+            <!-- Libations -->
+            <div class="logistics-row">
+              <div class="logistics-label">LIBATIONS</div>
+              <div class="logistics-value">
+                Guests are kindly asked to bring their own.
+              </div>
+            </div>
+
+            <!-- Supper (Border removed) -->
+            <div class="logistics-row no-border">
+              <div class="logistics-label">SUPPER</div>
+              <div class="logistics-value">
+                Savories and sweets shall be served throughout the evening. Guests are welcome to bring a favorite delicacy to share.
+              </div>
+            </div>
+
+            <!-- Festive RSVP Trigger Button -->
+            <div class="rsvp-trigger-container">
+              <button class="rsvp-open-btn" type="button" onclick="openRsvpDrawer()">
+                Seal Thy Attendance ✤
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. RSVP Modal Drawer -->
+    <div class="rsvp-drawer-overlay" id="rsvp-drawer" onclick="handleDrawerOverlayClick(event)">
+      <div class="rsvp-card">
+        <button class="drawer-close-btn" type="button" onclick="closeRsvpDrawer()">&times;</button>
+
+        <div class="rsvp-header-box">
+          <h2 class="rsvp-title">The Society Register</h2>
+          <p class="rsvp-subtitle">Declare thy intentions for the evening.</p>
+        </div>
+
+        <div class="rsvp-status-notice" id="rsvp-status-box"></div>
+
+        <form id="rsvp-form" onsubmit="submitRsvp(event)">
+          <!-- Name -->
+          <div class="form-field">
+            <label class="field-tag" for="guest-name">Full Name / Alias</label>
+            <input type="text" id="guest-name" class="gothic-input" required placeholder="Lord Sterling" />
+          </div>
+
+          <!-- Attending / Not Attending Radio -->
+          <div class="form-field">
+            <label class="field-tag">Attendance Intention</label>
+            <div class="radio-stack">
+              <label class="radio-option">
+                <input type="radio" name="attendance_status" value="Attending" checked />
+                <span class="radio-text">Shall Cross the Threshold (Attending)</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="attendance_status" value="Not Attending" />
+                <span class="radio-text">Haunting Only in Spirit (Regretfully Decline)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Plus How Many Others (0-10+) -->
+          <div class="form-field">
+            <label class="field-tag" for="guest-companions">Companions Accompanying Thee</label>
+            <select id="guest-companions" class="gothic-select">
+              <option value="0">0 (Arriving alone)</option>
+              <option value="1">1 Companion</option>
+              <option value="2">2 Companions</option>
+              <option value="3">3 Companions</option>
+              <option value="4">4 Companions</option>
+              <option value="5">5 Companions</option>
+              <option value="6">6 Companions</option>
+              <option value="7">7 Companions</option>
+              <option value="8">8 Companions</option>
+              <option value="9">9 Companions</option>
+              <option value="10+">10+ (An entire coven)</option>
+            </select>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="submit-rsvp-btn" id="submit-btn">
+            Pledge Thy Mark to the Register ✤
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // GOOGLE APPS SCRIPT WEB APP URL (Paste your copied URL below)
+    // =========================================================================
+    const GOOGLE_SHEET_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+    // Initial Landing Sequence
+    window.addEventListener('DOMContentLoaded', () => {
+      const candelabraMask = document.getElementById('mask-candelabra');
+      const candleAuras = document.getElementById('candle-auras');
+      const spokenSentence = document.getElementById('spoken-sentence');
+      const titleBanner = document.getElementById('title-banner');
+      const detailsFooter = document.getElementById('details-footer');
+      const actionGate = document.getElementById('action-gate');
+
+      const words = [
+        document.getElementById('w1'),
+        document.getElementById('w2'),
+        document.getElementById('w3'),
+        document.getElementById('w4')
+      ];
+
+      // 1. Candelabra emerges
+      setTimeout(() => {
+        candelabraMask.classList.add('revealed');
+        candleAuras.classList.add('active');
+      }, 800);
+
+      // 2. "You have been summoned" word-by-word
+      const spokenStart = 2400;
+      const cadenceGap = 420;
+
+      words.forEach((word, index) => {
+        setTimeout(() => {
+          word.classList.add('spoken');
+        }, spokenStart + (index * cadenceGap));
+      });
+
+      // 3. Middle Title
+      setTimeout(() => {
+        titleBanner.classList.add('revealed');
+      }, spokenStart + (words.length * cadenceGap) + 600);
+
+      // 4. Details resolve
+      setTimeout(() => {
+        detailsFooter.classList.add('revealed');
+      }, spokenStart + (words.length * cadenceGap) + 1600);
+
+      // 5. Fade out landing elements, show button
+      const totalArrivalComplete = spokenStart + (words.length * cadenceGap) + 1600;
+      const readingDelay = 3500;
+
+      setTimeout(() => {
+        spokenSentence.classList.add('faded-out');
+        titleBanner.classList.add('faded-out');
+        detailsFooter.classList.add('faded-out');
+        candleAuras.classList.remove('active');
+        candelabraMask.classList.remove('revealed');
+
+        setTimeout(() => {
+          actionGate.classList.add('visible');
+        }, 1600);
+      }, totalArrivalComplete + readingDelay);
+    });
+
+    // Parse word streams
+    function prepareWordStreams() {
+      const streamElements = document.querySelectorAll('.word-stream');
+      const allSpans = [];
+
+      streamElements.forEach(el => {
+        const text = el.getAttribute('data-words');
+        if (!text) return;
+        const wordsArray = text.split(' ');
+        el.innerHTML = '';
+        wordsArray.forEach(w => {
+          const span = document.createElement('span');
+          span.className = 'p-word';
+          span.innerHTML = w;
+          el.appendChild(span);
+          allSpans.push(span);
+        });
+      });
+      return allSpans;
+    }
+
+    // Triggered when "Answer the Summons >" is clicked
+    function openVintageInvitation() {
+      const actionGate = document.getElementById('action-gate');
+      const letterStage = document.getElementById('letter-stage');
+      const viewport = document.getElementById('viewport');
+      const logisticsBlock = document.getElementById('logistics-block');
+      const letterDivider = document.getElementById('letter-divider');
+
+      actionGate.classList.add('hidden');
+      viewport.classList.add('in-letter-view');
+
+      const spans = prepareWordStreams();
+
+      setTimeout(() => {
+        letterStage.classList.add('active');
+
+        const wordInterval = 115;
+        const startNarrativeDelay = 600;
+
+        spans.forEach((span, i) => {
+          setTimeout(() => {
+            span.classList.add('visible');
+          }, startNarrativeDelay + (i * wordInterval));
+        });
+
+        // Extra delay before details fade in
+        const narrativeTotalTime = startNarrativeDelay + (spans.length * wordInterval);
+        const detailsExtraDelay = 850; 
+
+        setTimeout(() => {
+          letterDivider.style.opacity = '1';
+          logisticsBlock.classList.add('revealed');
+        }, narrativeTotalTime + detailsExtraDelay);
+
+      }, 400);
+    }
+
+    // Drawer Controls
+    function openRsvpDrawer() {
+      document.getElementById('rsvp-drawer').classList.add('open');
+    }
+
+    function closeRsvpDrawer() {
+      document.getElementById('rsvp-drawer').classList.remove('open');
+    }
+
+    function handleDrawerOverlayClick(e) {
+      if (e.target.id === 'rsvp-drawer') {
+        closeRsvpDrawer();
+      }
+    }
+
+    // Google Sheets Form Submission
+    async function submitRsvp(e) {
+      e.preventDefault();
+
+      const submitBtn = document.getElementById('submit-btn');
+      const statusBox = document.getElementById('rsvp-status-box');
+
+      const statusRadio = document.querySelector('input[name="attendance_status"]:checked');
+      const payload = {
+        name: document.getElementById('guest-name').value.trim(),
+        status: statusRadio ? statusRadio.value : 'Attending',
+        companions: document.getElementById('guest-companions').value
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = "Recording in Register...";
+
+      try {
+        if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL !== "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
+          await fetch(GOOGLE_SHEET_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+          });
+        }
+
+        statusBox.style.display = 'block';
+        statusBox.innerHTML = `✤ Thy mark has been sealed into the register, <strong>${payload.name}</strong>. The Manor awaits thy arrival.`;
+
+        submitBtn.innerHTML = "Mark Sealed ✤";
+
+        setTimeout(() => {
+          closeRsvpDrawer();
+        }, 2600);
+
+      } catch (err) {
+        console.error("Submission failed:", err);
+        statusBox.style.display = 'block';
+        statusBox.innerHTML = `Thy presence has been recorded locally. We await thee.`;
+        submitBtn.innerHTML = "Mark Preserved ✤";
+
+        setTimeout(() => {
+          closeRsvpDrawer();
+        }, 2200);
+      }
+    }
+  </script>
+</body>
+</html>
