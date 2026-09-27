@@ -1342,58 +1342,84 @@
     }
 
     // Google Sheets Form Submission & Signed Card Reveal
-    async function submitRsvp(e) {
-      e.preventDefault();
+    // Replace your entire submitRsvp function in index.html with this:
+function submitRsvp(e) {
+  e.preventDefault();
 
-      const submitBtn = document.getElementById('submit-btn');
-      const statusRadio = document.querySelector('input[name="attendance_status"]:checked');
-      const isAttending = statusRadio ? statusRadio.value === 'Attending' : true;
-      const companionsVal = document.getElementById('guest-companions').value;
+  const submitBtn = document.getElementById('submit-btn');
+  const statusRadio = document.querySelector('input[name="attendance_status"]:checked');
+  const isAttending = statusRadio ? statusRadio.value === 'Attending' : true;
+  const companionsVal = document.getElementById('guest-companions').value;
+  const guestName = document.getElementById('guest-name').value.trim();
 
-      const payload = {
-        name: document.getElementById('guest-name').value.trim(),
-        status: isAttending ? 'Attending' : 'Not Attending',
-        companions: companionsVal
-      };
+  const payload = {
+    name: guestName,
+    status: isAttending ? 'Attending' : 'Not Attending',
+    companions: companionsVal
+  };
 
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = "Etching into Register...";
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = "Etching into Register...";
 
-      try {
-        if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL !== "https://script.google.com/macros/s/AKfycbwcR_gzanYmRKz_2xwGt1SL7FUQantv4Fusz6sRoYW9lPpzctgSOn1oAT3H2q4_0XlP-A/exec") {
-          await fetch(GOOGLE_SHEET_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(payload)
-          });
-        }
-      } catch (err) {
-        console.error("Submission saved locally:", err);
-      }
-
-      closeRsvpDrawer();
-
-      const confName = document.getElementById('conf-signature-name');
-      const confBody = document.getElementById('conf-letter-body');
-      const confMeta = document.getElementById('conf-meta-summary');
-
-      confName.textContent = payload.name || "A Guest of the Society";
-
-      if (isAttending) {
-        confBody.textContent = "Thy pledge has been received within the halls of Blackthorn Manor. The doors shall unseal at half past seven, and thy presence is awaited.";
-        confMeta.textContent = `Present in the Shadows • ${payload.companions === '0' ? 'Arriving Solo' : payload.companions + ' Companion(s)'}`;
-      } else {
-        confBody.textContent = "Thy regrets have been recorded in the annals of the Society. Though absent from our halls, thou shalt haunt with us in spirit.";
-        confMeta.textContent = `Haunting in Spirit • Regretfully Declined`;
-      }
-
-      setTimeout(() => {
-        document.getElementById('confirmation-stage').classList.add('revealed');
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = "Record Thy Attendance ✤";
-      }, 450);
+  // 1. Silent, Bulletproof Submission via Hidden Form + iframe (Bypasses all CORS issues)
+  if (GOOGLE_SHEET_URL && !GOOGLE_SHEET_URL.includes("YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE")) {
+    let hiddenFrame = document.getElementById('hidden_submit_frame');
+    if (!hiddenFrame) {
+      hiddenFrame = document.createElement('iframe');
+      hiddenFrame.name = 'hidden_submit_frame';
+      hiddenFrame.id = 'hidden_submit_frame';
+      hiddenFrame.style.display = 'none';
+      document.body.appendChild(hiddenFrame);
     }
+
+    const tempForm = document.createElement('form');
+    tempForm.method = 'POST';
+    tempForm.action = GOOGLE_SHEET_URL;
+    tempForm.target = 'hidden_submit_frame';
+    tempForm.style.display = 'none';
+
+    // Append inputs
+    for (const key in payload) {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = payload[key];
+      tempForm.appendChild(input);
+    }
+
+    document.body.appendChild(tempForm);
+    tempForm.submit();
+    
+    // Clean up temporary form after send
+    setTimeout(() => {
+      tempForm.remove();
+    }, 1000);
+  }
+
+  // 2. Close Drawer and Transition to the Signed Confirmation Card
+  closeRsvpDrawer();
+
+  const confName = document.getElementById('conf-signature-name');
+  const confBody = document.getElementById('conf-letter-body');
+  const confMeta = document.getElementById('conf-meta-summary');
+
+  confName.textContent = payload.name || "A Guest of the Society";
+
+  if (isAttending) {
+    confBody.textContent = "Thy pledge has been received within the halls of Blackthorn Manor. The doors shall unseal at half past seven, and thy presence is awaited.";
+    confMeta.textContent = `Present in the Shadows • ${payload.companions === '0' ? 'Arriving Solo' : payload.companions + ' Companion(s)'}`;
+  } else {
+    confBody.textContent = "Thy regrets have been recorded in the annals of the Society. Though absent from our halls, thou shalt haunt with us in spirit.";
+    confMeta.textContent = `Haunting in Spirit • Regretfully Declined`;
+  }
+
+  setTimeout(() => {
+    document.getElementById('confirmation-stage').classList.add('revealed');
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = "Record Thy Attendance ✤";
+  }, 450);
+}
+
 
     function closeConfirmation() {
       document.getElementById('confirmation-stage').classList.remove('revealed');
