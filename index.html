@@ -151,9 +151,10 @@
       filter: blur(0);
     }
 
+    /* Middle Title: Multi-line layout */
     .title-banner {
       position: absolute;
-      top: 66%;
+      top: 65%;
       left: 0;
       right: 0;
       text-align: center;
@@ -170,14 +171,22 @@
 
     .title-text {
       font-family: 'Cinzel', serif;
-      font-size: 1.28rem;
+      font-size: 1.25rem;
       letter-spacing: 0.22em;
       text-transform: uppercase;
       font-weight: 600;
+      line-height: 1.45;
       background: linear-gradient(135deg, #fff7de 0%, #e8ca79 50%, #9e7f3a 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 16px rgba(212, 175, 55, 0.3));
+    }
+
+    .title-text .sub-line {
+      display: block;
+      font-size: 1.1rem;
+      letter-spacing: 0.26em;
+      margin-top: 0.15rem;
     }
 
     .details-footer {
@@ -319,7 +328,6 @@
         url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.12'/%3E%3C/svg%3E");
       color: #1a1510;
       border-radius: 3px;
-      padding: 2.6rem 1.3rem 2.2rem;
       box-shadow: 
         0 25px 50px rgba(0, 0, 0, 0.95),
         inset 0 0 45px rgba(95, 63, 25, 0.5),
@@ -338,12 +346,23 @@
       display: none;
     }
 
+    /* Content Wrapper that stretches with scrollable height */
+    .parchment-content-wrapper {
+      position: relative;
+      min-height: 100%;
+      padding: 2.4rem 1.4rem 2.6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
     /* Deckled/Burned Frame */
     .letter-inner-frame {
       position: absolute;
       inset: 8px;
       border: 1px solid #755529;
       pointer-events: none;
+      z-index: 1;
     }
 
     .letter-inner-frame::before {
@@ -357,19 +376,22 @@
       position: absolute;
       color: #755529;
       font-size: 0.72rem;
+      z-index: 2;
+      pointer-events: none;
     }
-    .cf-tl { top: 10px; left: 12px; }
-    .cf-tr { top: 10px; right: 12px; }
-    .cf-bl { bottom: 10px; left: 12px; }
-    .cf-br { bottom: 10px; right: 12px; }
+    .cf-tl { top: 12px; left: 13px; }
+    .cf-tr { top: 12px; right: 13px; }
+    .cf-bl { bottom: 12px; left: 13px; }
+    .cf-br { bottom: 12px; right: 13px; }
 
     .letter-body {
       position: relative;
-      z-index: 2;
+      z-index: 3;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
+      width: 100%;
     }
 
     .p-word {
@@ -421,7 +443,6 @@
       margin-bottom: 0.2rem;
     }
 
-    /* Blackthorn Manor title with natural sentence-like spacing below */
     .p-manor-title {
       font-family: 'Cinzel', serif;
       font-size: 1.25rem;
@@ -429,7 +450,7 @@
       font-weight: 700;
       color: #1a140f;
       margin-top: 0.95rem;
-      margin-bottom: 0.45rem; /* Matches inter-sentence gap */
+      margin-bottom: 0.45rem;
     }
 
     .p-story-block {
@@ -483,7 +504,6 @@
       border-bottom: 1px dotted rgba(117, 85, 41, 0.25);
     }
 
-    /* Final row (Supper): completely borderless */
     .logistics-row.no-border,
     .logistics-row:last-child {
       border-bottom: none !important;
@@ -811,9 +831,12 @@
       <span class="word" id="w4">summoned</span>
     </div>
 
-    <!-- 2. Middle Title -->
+    <!-- 2. Middle Title: Two-line break with "Awaits..." on line 2 -->
     <div class="title-banner" id="title-banner">
-      <h1 class="title-text">Blackthorn Manor Awaits</h1>
+      <h1 class="title-text">
+        Blackthorn Manor
+        <span class="sub-line">Awaits...</span>
+      </h1>
     </div>
 
     <!-- 3. Bottom Event Details -->
@@ -833,82 +856,84 @@
     <!-- 5. Vintage Victorian Invitation Letter Overlay -->
     <section class="parchment-letter-stage" id="letter-stage">
       <div class="parchment-paper">
-        <div class="letter-inner-frame"></div>
-        <div class="corner-fleuron cf-tl">✤</div>
-        <div class="corner-fleuron cf-tr">✤</div>
-        <div class="corner-fleuron cf-bl">✤</div>
-        <div class="corner-fleuron cf-br">✤</div>
+        <div class="parchment-content-wrapper">
+          <div class="letter-inner-frame"></div>
+          <div class="corner-fleuron cf-tl">✤</div>
+          <div class="corner-fleuron cf-tr">✤</div>
+          <div class="corner-fleuron cf-bl">✤</div>
+          <div class="corner-fleuron cf-br">✤</div>
 
-        <div class="letter-body">
-          <!-- Header -->
-          <div class="p-the-line word-stream" data-words="THE"></div>
-          <div class="p-society word-stream" data-words="BLACKTHORN SOCIETY"></div>
-          <div class="p-sublead word-stream" data-words="invites you to an evening at"></div>
-          <div class="p-manor-title word-stream" data-words="BLACKTHORN MANOR"></div>
+          <div class="letter-body">
+            <!-- Header -->
+            <div class="p-the-line word-stream" data-words="THE"></div>
+            <div class="p-society word-stream" data-words="BLACKTHORN SOCIETY"></div>
+            <div class="p-sublead word-stream" data-words="invites you to an evening at"></div>
+            <div class="p-manor-title word-stream" data-words="BLACKTHORN MANOR"></div>
 
-          <!-- Narrative -->
-          <div class="p-story-block">
-            <p class="word-stream" data-words="On the eve of All Hallows, Blackthorn Manor shall open its doors once more."></p>
-            <p class="word-stream" data-words="The Society will gather within its old rooms for an evening of spirits, secrets, and questionable&nbsp;company."></p>
-            <p class="word-stream" data-words="The house has stood quiet for many years."></p>
-            <p class="word-stream" data-words="On this night, it shall receive company again."></p>
-          </div>
-
-          <!-- Divider -->
-          <div class="divider-mark" id="letter-divider" style="opacity: 0; transition: opacity 1.2s ease;">✤ &nbsp; ✤ &nbsp; ✤</div>
-
-          <!-- Logistics & Event Details -->
-          <div class="logistics-block" id="logistics-block">
-            <!-- Date -->
-            <div class="logistics-row">
-              <div class="logistics-label">DATE</div>
-              <div class="logistics-value font-serif-caps">Friday, October 30, 2026</div>
+            <!-- Narrative -->
+            <div class="p-story-block">
+              <p class="word-stream" data-words="On the eve of All Hallows, Blackthorn Manor shall open its doors once more."></p>
+              <p class="word-stream" data-words="The Society will gather within its old rooms for an evening of spirits, secrets, and questionable&nbsp;company."></p>
+              <p class="word-stream" data-words="The house has stood quiet for many years."></p>
+              <p class="word-stream" data-words="On this night, it shall receive company again."></p>
             </div>
 
-            <!-- Time -->
-            <div class="logistics-row">
-              <div class="logistics-label">TIME</div>
-              <div class="logistics-value font-serif-caps">7:30 PM</div>
-            </div>
+            <!-- Divider -->
+            <div class="divider-mark" id="letter-divider" style="opacity: 0; transition: opacity 1.2s ease;">✤ &nbsp; ✤ &nbsp; ✤</div>
 
-            <!-- Address -->
-            <div class="logistics-row">
-              <div class="logistics-label">ADDRESS</div>
-              <div class="logistics-value font-serif-caps">
-                5909 Danville Dr.<br>
-                Raleigh, NC 27612
+            <!-- Logistics & Event Details -->
+            <div class="logistics-block" id="logistics-block">
+              <!-- Date -->
+              <div class="logistics-row">
+                <div class="logistics-label">DATE</div>
+                <div class="logistics-value font-serif-caps">Friday, October 30, 2026</div>
               </div>
-            </div>
 
-            <!-- Attire -->
-            <div class="logistics-row">
-              <div class="logistics-label">ATTIRE</div>
-              <div class="logistics-value">
-                Come as you are — or as someone else entirely.
+              <!-- Time -->
+              <div class="logistics-row">
+                <div class="logistics-label">TIME</div>
+                <div class="logistics-value font-serif-caps">7:30 PM</div>
               </div>
-            </div>
 
-            <!-- Libations -->
-            <div class="logistics-row">
-              <div class="logistics-label">LIBATIONS</div>
-              <div class="logistics-value">
-                Guests are kindly asked to bring their own.
+              <!-- Address -->
+              <div class="logistics-row">
+                <div class="logistics-label">ADDRESS</div>
+                <div class="logistics-value font-serif-caps">
+                  5909 Danville Dr.<br>
+                  Raleigh, NC 27612
+                </div>
               </div>
-            </div>
 
-            <!-- Supper (Border removed) -->
-            <div class="logistics-row no-border">
-              <div class="logistics-label">SUPPER</div>
-              <div class="logistics-value">
-                Savories and sweets shall be served throughout the evening. Guests are welcome to bring a favorite delicacy to share.
+              <!-- Attire -->
+              <div class="logistics-row">
+                <div class="logistics-label">ATTIRE</div>
+                <div class="logistics-value">
+                  Come as you are — or as someone else entirely.
+                </div>
               </div>
-            </div>
 
-            <!-- Festive RSVP Trigger Button -->
-            <div class="rsvp-trigger-container">
-              <button class="rsvp-open-btn" type="button" onclick="openRsvpDrawer()">
-                Seal Thy Attendance ✤
-              </button>
+              <!-- Libations -->
+              <div class="logistics-row">
+                <div class="logistics-label">LIBATIONS</div>
+                <div class="logistics-value">
+                  Guests are kindly asked to bring their own.
+                </div>
+              </div>
+
+              <!-- Supper -->
+              <div class="logistics-row no-border">
+                <div class="logistics-label">SUPPER</div>
+                <div class="logistics-value">
+                  Savories and sweets shall be served throughout the evening. Guests are welcome to bring a favorite delicacy to share.
+                </div>
+              </div>
+
+              <!-- Festive RSVP Trigger Button -->
+              <div class="rsvp-trigger-container">
+                <button class="rsvp-open-btn" type="button" onclick="openRsvpDrawer()">
+                  Seal Thy Attendance ✤
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1014,7 +1039,7 @@
         }, spokenStart + (index * cadenceGap));
       });
 
-      // 3. Middle Title
+      // 3. Middle Title illuminates
       setTimeout(() => {
         titleBanner.classList.add('revealed');
       }, spokenStart + (words.length * cadenceGap) + 600);
@@ -1087,7 +1112,6 @@
           }, startNarrativeDelay + (i * wordInterval));
         });
 
-        // Extra delay before details fade in
         const narrativeTotalTime = startNarrativeDelay + (spans.length * wordInterval);
         const detailsExtraDelay = 850; 
 
